@@ -3,9 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
-
 android {
-    namespace = "com.mfa.feature.profile"
+    namespace = "com.mfa.profile"
     compileSdk = 34
     defaultConfig{
         minSdk = 24
@@ -35,14 +34,16 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":core:ui"))
-
     // Compose
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.ui.tooling.preview)
-
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
     androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.junit)
+    implementation(project(":core:ui"))
+    implementation(project(":data"))
+
 }

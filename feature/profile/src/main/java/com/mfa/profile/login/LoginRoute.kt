@@ -10,53 +10,73 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mfa.feature.profile.R
+import com.mfa.profile.R
 
 @Composable
 fun LoginRoute(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = hiltViewModel(),
-    onSignupClick: () -> Unit
+    viewModel: LoginViewModel = hiltViewModel(),
+    onSignupClick: () -> Unit,
+    onLoggedIn: () -> Unit
 ) {
-    LoginScreen(modifier = modifier, onSignupClick = onSignupClick)
+    LoginScreen(modifier = modifier, viewModel = viewModel, onSignupClick = onSignupClick, onLoggedIn = onLoggedIn)
 }
 
 @Composable
-internal fun LoginScreen(modifier: Modifier = Modifier, onSignupClick: () -> Unit) {
+internal fun LoginScreen(
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = hiltViewModel(),
+    onSignupClick: () -> Unit,
+    onLoggedIn: () -> Unit
+) {
+    val showWarningMessage = viewModel.showWarningMessage.collectAsState()
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(horizontal = 16.dp)
         ) {
+            var emailTextFieldValue by remember {
+                mutableStateOf(TextFieldValue())
+            }
             TextField(modifier = Modifier
-                .fillMaxWidth()
-                .height(42.dp), label = {
-                Text(stringResource(R.string.user_name))
-            }, value = TextFieldValue(
-                text = ""
-            ), onValueChange = {
-
-            })
+                .fillMaxWidth(),
+                label = {
+                    Text(stringResource(R.string.email))
+                }, value = emailTextFieldValue, onValueChange = {
+                    emailTextFieldValue = it
+                })
             Spacer(Modifier.height(16.dp))
+            var passwordTextFieldValue by remember {
+                mutableStateOf(TextFieldValue())
+            }
             TextField(modifier = Modifier
-                .fillMaxWidth()
-                .height(42.dp), label = {
-                Text(stringResource(R.string.password))
-            }, value = TextFieldValue(
-                text = ""
-            ), onValueChange = {
-
-            })
+                .fillMaxWidth(),
+                label = {
+                    Text(stringResource(R.string.password))
+                }, value = passwordTextFieldValue,
+                onValueChange = {
+                    passwordTextFieldValue = it
+                })
             Spacer(Modifier.height(32.dp))
             Button(onClick = {
-
+                viewModel.login(
+                    email = emailTextFieldValue.text,
+                    password = passwordTextFieldValue.text,
+                    onLoggedIn = onLoggedIn
+                )
             },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,6 +90,10 @@ internal fun LoginScreen(modifier: Modifier = Modifier, onSignupClick: () -> Uni
                     .height(42.dp), content = {
                     Text(stringResource(R.string.signup))
                 })
+            if (showWarningMessage.value){
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(text = stringResource(id = R.string.invalid_login_message), color = Color.Red)
+            }
         }
     }
 }

@@ -16,6 +16,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.mfa.notes.ui.navigation.AppNavigation
 import com.mfa.notes.ui.theme.NotesTheme
 import com.mfa.ui.BottomNavigationBar
@@ -23,8 +26,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var firebaseAuth : FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        firebaseAuth = Firebase.auth
         enableEdgeToEdge()
         setContent {
             NotesTheme {
@@ -37,11 +44,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         bottomBar = {
-                            BottomNavigationBar(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(42.dp), navController = rememberNavController()
-                            )
+                            if (firebaseAuth.currentUser != null) {
+                                BottomNavigationBar(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(42.dp), navController = rememberNavController()
+                                )
+                            }
                         }
                     ) { paddingValues ->
                         AppNavigation(modifier = Modifier.padding(paddingValues))
