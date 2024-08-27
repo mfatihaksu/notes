@@ -16,4 +16,20 @@ class NoteRepository @Inject constructor() : INoteRepository {
         }
         return emptyFlow()
     }
+
+    override suspend fun createNote() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getNote(id: String): Flow<Note> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateNote(note: Note) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteNote(id: String) {
+        TODO("Not yet implemented")
+    }
 }
